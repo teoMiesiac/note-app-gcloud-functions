@@ -1,14 +1,16 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
+const bodyParser = require("body-parser");
+const route = require("./routes");
 
 const app = express();
 
 app.use(cors({ origin: true }));
+
+app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
+app.use("/", route);
 
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to bezkoder application." });
-});
-
-module.exports = app;
+module.exports = {
+  app,
+};
