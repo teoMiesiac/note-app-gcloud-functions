@@ -3,8 +3,12 @@ const utils = require("../utils");
 
 function createNote(req, res) {
   const body = req.body;
-  if (body.text === "" || body.password === "") {
+  if (!body.text || !body.params) {
     return res.status(400).send({ error: "provide correct data" });
+  }
+
+  if (body.text === "" || body.password === "") {
+    return res.status(422).send({ error: "provide correct data" });
   }
 
   return services.firestoreService
@@ -14,7 +18,7 @@ function createNote(req, res) {
     })
     .catch((err) => {
       console.error(err);
-      return res.status(404).send({ error: "unable to save note", err });
+      return res.status(500).send({ error: "unable to save note", err });
     });
 }
 
@@ -31,7 +35,7 @@ function getNote(req, res) {
       const data = doc.data();
 
       if (data.password !== password) {
-        return res.status(404).send({ error: "Wrong password" });
+        return res.status(403).send({ error: "Wrong password" });
       }
 
       if (utils.didNoteExpired(data)) {
@@ -42,7 +46,7 @@ function getNote(req, res) {
     })
     .catch((err) => {
       console.error(err);
-      return res.status(404).send({ error: "Sth went wrong, try again" });
+      return res.status(500).send({ error: "Sth went wrong, try again" });
     });
 }
 
